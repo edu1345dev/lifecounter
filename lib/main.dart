@@ -46,7 +46,8 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             StreamBuilder(
               stream: bloc.lifeAmount,
-              builder: (context, snapshot) => snapshot.hasData
+              builder: (context, snapshot) =>
+              snapshot.hasData
                   ? Text('${snapshot.data}')
                   : CircularProgressIndicator(),
             ),
