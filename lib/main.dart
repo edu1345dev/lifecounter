@@ -46,8 +46,7 @@ class MyHomePage extends StatelessWidget {
           children: <Widget>[
             StreamBuilder(
               stream: bloc.lifeAmount,
-              builder: (context, snapshot) =>
-              snapshot.hasData
+              builder: (context, snapshot) => snapshot.hasData
                   ? Text('${snapshot.data}')
                   : CircularProgressIndicator(),
             ),
@@ -71,11 +70,19 @@ class DecreasingButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final bloc = LifeBlocProvider.of(context);
 
-    return FlatButton(
-        onPressed: () {
-          bloc.decrement.add(null);
-        },
-        child: Text("Tirar vida"));
+    return GestureDetector(
+      onLongPressStart: (details){
+        bloc.incrementLong.add(null);
+      },
+      onLongPressEnd: (details){
+        bloc.incrementLongStop.add(null);
+      },
+      child: FlatButton(
+          onPressed: () {
+            bloc.decrement.add(null);
+          },
+          child: Text("Tirar vida")),
+    );
   }
 }
 
