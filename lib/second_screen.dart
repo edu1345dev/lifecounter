@@ -5,6 +5,9 @@ import 'bloc_provider.dart';
 import 'main.dart';
 
 class SecondScreen extends StatelessWidget {
+  GlobalKey<ScaffoldState> scaffold;
+  SecondScreen(this.scaffold);
+
   @override
   Widget build(BuildContext context) {
     final bloc = LifeBlocProvider.of(context);
@@ -19,7 +22,7 @@ class SecondScreen extends StatelessWidget {
                 builder: (context, snapshot) => snapshot.hasData
                     ? Text(snapshot.data.toString())
                     : Text('No Data')),
-            IncreasingButton(),
+            IncreasingButton(scaffold),
             DecreasingButton(),
           ],
         ),

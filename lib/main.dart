@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatelessWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
+  GlobalKey<ScaffoldState> _scaffold = GlobalKey();
 
   final String title;
 
@@ -37,6 +38,7 @@ class MyHomePage extends StatelessWidget {
     final bloc = LifeBlocProvider.of(context);
 
     return Scaffold(
+      key: _scaffold,
       appBar: AppBar(
         title: Text(title),
       ),
@@ -50,12 +52,12 @@ class MyHomePage extends StatelessWidget {
                   ? Text('${snapshot.data}')
                   : CircularProgressIndicator(),
             ),
-            IncreasingButton(),
+            IncreasingButton(_scaffold),
             DecreasingButton(),
             FlatButton(
                 onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SecondScreen()));
+                      MaterialPageRoute(builder: (context) => SecondScreen(_scaffold)));
                 },
                 child: Text('Second Screen'))
           ],
@@ -71,10 +73,10 @@ class DecreasingButton extends StatelessWidget {
     final bloc = LifeBlocProvider.of(context);
 
     return GestureDetector(
-      onLongPressStart: (details){
+      onLongPressStart: (details) {
         bloc.incrementLong.add(null);
       },
-      onLongPressEnd: (details){
+      onLongPressEnd: (details) {
         bloc.incrementLongStop.add(null);
       },
       child: FlatButton(
@@ -87,12 +89,17 @@ class DecreasingButton extends StatelessWidget {
 }
 
 class IncreasingButton extends StatelessWidget {
+  GlobalKey<ScaffoldState> scaffold;
+
+  IncreasingButton(this.scaffold);
+
   @override
   Widget build(BuildContext context) {
     final bloc = LifeBlocProvider.of(context);
 
     return FlatButton(
         onPressed: () {
+          scaffold.currentState.showSnackBar(SnackBar(content: Text('Snackbar Teste')));
           bloc.increment.add(null);
         },
         child: Text("Adicionar vida"));

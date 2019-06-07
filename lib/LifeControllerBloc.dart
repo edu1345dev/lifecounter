@@ -30,7 +30,7 @@ class LifeControllerBloc {
     });
 
     Observable(_incrementLong.stream).startWith(initialLife).listen((void _) {
-      onLong();
+      onLongIncrement();
     });
 
     Observable(_incrementLongStop.stream).startWith(initialLife).listen((_) {
@@ -38,7 +38,7 @@ class LifeControllerBloc {
     });
   }
 
-  void onLong() async{
+  void onLongIncrement() async{
     repeat = true;
     while (repeat) {
       initialLife = initialLife + 1;
@@ -52,7 +52,6 @@ class LifeControllerBloc {
 
   Sink<void> get incrementLong => _incrementLong.sink;
   Sink<void> get incrementLongStop => _incrementLongStop.sink;
-
   Sink<void> get decrement => _decrement.sink;
 
   Stream<int> get lifeAmount => _lifeAmount;
