@@ -1,28 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:lifecounter/second_screen.dart';
 
-import 'LifeControllerBloc.dart';
+import 'LifeControlWidget.dart';
 import 'bloc_provider.dart';
 
 void main() {
-  final bloc = LifeControllerBloc(initialLife: 20);
-  runApp(MyApp(bloc));
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final LifeControllerBloc bloc;
-
-  MyApp(this.bloc);
-
   @override
   Widget build(BuildContext context) {
-    return LifeBlocProvider(
-      bloc: bloc,
-      child: MaterialApp(
-        title: 'Magic Lifecounter',
-        theme: ThemeData(),
-        home: MyHomePage(title: 'Magic Lifecounter'),
-      ),
+    return MaterialApp(
+      title: 'Magic Lifecounter',
+      theme: ThemeData(),
+      home: MyHomePage(title: 'Magic Lifecounter'),
     );
   }
 }
@@ -35,73 +26,44 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = LifeBlocProvider.of(context);
-
     return Scaffold(
       key: _scaffold,
-      appBar: AppBar(
-        title: Text(title),
-      ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            StreamBuilder(
-              stream: bloc.lifeAmount,
-              builder: (context, snapshot) => snapshot.hasData
-                  ? Text('${snapshot.data}')
-                  : CircularProgressIndicator(),
+          child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisSize: MainAxisSize.max,
+        children: <Widget>[
+          Expanded(
+            child: DecoratedBox(
+              decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.black, Colors.white])),
+              child: Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: RotatedBox(
+                    quarterTurns: 2,
+                    child: LifeControlWidget(),
+                  )),
             ),
-            IncreasingButton(_scaffold),
-            DecreasingButton(),
-            FlatButton(
-                onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => SecondScreen(_scaffold)));
-                },
-                child: Text('Second Screen'))
-          ],
-        ),
-      ),
+          ),
+          Container(
+            child: SizedBox(
+              height: 4,
+              width: 1000,
+              child: DecoratedBox(
+                decoration: BoxDecoration(color: Colors.white, ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: DecoratedBox(
+              decoration: BoxDecoration(gradient: LinearGradient(colors: [Colors.white, Colors.black])),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: LifeControlWidget(),
+              ),
+            ),
+          )
+        ],
+      )),
     );
-  }
-}
-
-class DecreasingButton extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final bloc = LifeBlocProvider.of(context);
-
-    return GestureDetector(
-      onLongPressStart: (details) {
-        bloc.incrementLong.add(null);
-      },
-      onLongPressEnd: (details) {
-        bloc.incrementLongStop.add(null);
-      },
-      child: FlatButton(
-          onPressed: () {
-            bloc.decrement.add(null);
-          },
-          child: Text("Tirar vida")),
-    );
-  }
-}
-
-class IncreasingButton extends StatelessWidget {
-  GlobalKey<ScaffoldState> scaffold;
-
-  IncreasingButton(this.scaffold);
-
-  @override
-  Widget build(BuildContext context) {
-    final bloc = LifeBlocProvider.of(context);
-
-    return FlatButton(
-        onPressed: () {
-          scaffold.currentState.showSnackBar(SnackBar(content: Text('Snackbar Teste')));
-          bloc.increment.add(null);
-        },
-        child: Text("Adicionar vida"));
   }
 }
