@@ -5,13 +5,23 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'LifeControllerBloc.dart';
 import 'bloc_provider.dart';
 
-class LifeControlWidget extends StatelessWidget {
-  final bloc = LifeControllerBloc(initialLife: 20);
+class LifeControlWidget extends StatefulWidget {
+  var bloc = LifeControllerBloc(initialLife: 20);
+
+  reinitLife() {
+    bloc.reset();
+  }
+
+  @override
+  _LifeControlWidgetState createState() => _LifeControlWidgetState();
+}
+
+class _LifeControlWidgetState extends State<LifeControlWidget> {
 
   @override
   Widget build(BuildContext context) {
     return LifeBlocProvider(
-        bloc: bloc,
+        bloc: widget.bloc,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
@@ -19,7 +29,7 @@ class LifeControlWidget extends StatelessWidget {
             children: <Widget>[
               IncreasingButton(),
               StreamBuilder(
-                stream: bloc.lifeAmount,
+                stream: widget.bloc.lifeAmount,
                 builder: (context, snapshot) => snapshot.hasData
                     ? AnimatedTextWidget(snapshot.data.toString())
                     : CircularProgressIndicator(),
@@ -68,11 +78,11 @@ class _IncreasingButtonState extends State<IncreasingButton>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      reverseDuration: Duration(milliseconds: 350),
+      reverseDuration: Duration(milliseconds: 150),
       vsync: this,
       duration: Duration(milliseconds: 150),
       lowerBound: 0.0,
-      upperBound: 0.5,
+      upperBound: 0.3,
     )..addListener(() {
         setState(() {});
       });
@@ -85,13 +95,13 @@ class _IncreasingButtonState extends State<IncreasingButton>
 
     return GestureDetector(
       onTapDown: (details) {
-          _controller.forward();
+        _controller.forward();
       },
       onTapUp: (details) {
-          _controller.reverse();
+        _controller.reverse();
       },
       onTapCancel: () {
-          _controller.reverse();
+        _controller.reverse();
       },
       onLongPressStart: (details) {
         bloc.incrementLong.add(null);
@@ -131,12 +141,9 @@ class _AnimatedTextWidgetState extends State<AnimatedTextWidget> {
     return Expanded(
         child: Center(
             child: AutoSizeText(
-              '${widget._text}',
-              style: TextStyle(fontSize: 112, color: Colors.white),
-              maxLines: 1,
-            )));
+      '${widget._text}',
+      style: TextStyle(fontSize: 112, color: Colors.white),
+      maxLines: 1,
+    )));
   }
 }
-
-
-

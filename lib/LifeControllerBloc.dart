@@ -9,11 +9,16 @@ class LifeControllerBloc {
   final _lifeAmount = BehaviorSubject<int>();
   bool repeat = false;
 
+  reset() {
+    initialLife = 20;
+    _lifeAmount.add(20);
+  }
+
   LifeControllerBloc({this.initialLife}) {
     Function increment = () {
-    initialLife = initialLife + 1;
-    _lifeAmount.add(initialLife);
-  };
+      initialLife = initialLife + 1;
+      _lifeAmount.add(initialLife);
+    };
 
     Function decrement = () {
       initialLife = initialLife - 1;

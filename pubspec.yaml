@@ -44,6 +44,7 @@ flutter:
     - images/minus.png
     - images/plus_white.png
     - images/minus_white.png
+    - images/reset_white.png
   #  - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
