@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'LifeControlWidget.dart';
 import 'bloc_provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 void main() {
   runApp(MyApp());
@@ -78,7 +79,17 @@ class MyHomePage extends StatelessWidget {
                   },
                   child: IconButton(
                     iconSize: 50,
-                    onPressed: () {},
+                    onPressed: () {
+                      Fluttertoast.showToast(
+                          msg: "Hold to reset",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.CENTER,
+                          timeInSecForIos: 1,
+                          backgroundColor: Colors.white,
+                          textColor: Colors.black,
+                          fontSize: 16.0
+                      );
+                    },
                     icon:
                         Image(image: AssetImage('images/reset_white.png')),
                   ),
