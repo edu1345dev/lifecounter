@@ -24,8 +24,8 @@ class MyHomePage extends StatelessWidget {
   GlobalKey<ScaffoldState> _scaffold = GlobalKey();
 
   final String title;
-  final p1Life = LifeControlWidget();
-  final p2Life = LifeControlWidget();
+  final p1Life = LifeControlWidget(initialLife: 20);
+  final p2Life = LifeControlWidget(initialLife: 20);
 
   @override
   Widget build(BuildContext context) {

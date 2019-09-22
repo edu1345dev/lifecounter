@@ -6,7 +6,10 @@ import 'LifeControllerBloc.dart';
 import 'bloc_provider.dart';
 
 class LifeControlWidget extends StatefulWidget {
-  var bloc = LifeControllerBloc(initialLife: 20);
+
+  var bloc;
+
+  var initialLife;
 
   reinitLife() {
     bloc.reset();
@@ -14,30 +17,67 @@ class LifeControlWidget extends StatefulWidget {
 
   @override
   _LifeControlWidgetState createState() => _LifeControlWidgetState();
+
+  LifeControlWidget({this.initialLife: 20}){
+    bloc = LifeControllerBloc(initialLife: initialLife);
+  }
 }
 
 class _LifeControlWidgetState extends State<LifeControlWidget> {
-
   @override
   Widget build(BuildContext context) {
     return LifeBlocProvider(
         bloc: widget.bloc,
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              IncreasingButton(),
-              StreamBuilder(
-                stream: widget.bloc.lifeAmount,
-                builder: (context, snapshot) => snapshot.hasData
-                    ? AnimatedTextWidget(snapshot.data.toString())
-                    : CircularProgressIndicator(),
+              Expanded(
+                flex: 3,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    DecreasingButton(),
+                    StreamBuilder(
+                      stream: widget.bloc.lifeAmount,
+                      builder: (context, snapshot) =>
+                      snapshot.hasData
+                          ? AnimatedTextWidget(snapshot.data.toString())
+                          : CircularProgressIndicator(),
+                    ),
+                    IncreasingButton(),
+                  ],
+                ),
               ),
-              DecreasingButton(),
+              Expanded(
+                flex: 1,
+                child: StreamBuilder(
+                    stream: widget.bloc.lifeTrack,
+                    builder: (context, snapshot) {
+                      if (!snapshot.hasData)
+                        return Text('Loading...');
+                      else
+                        return ListView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) =>
+                                buildText(snapshot, index));
+                    }),
+              ),
             ],
           ),
         ));
+  }
+
+  Text buildText(AsyncSnapshot snapshot, int index) {
+    return (index == 0) ?
+
+    Text(snapshot.data[index].toString()+"  ",
+      style: TextStyle(color: Colors.white, decorationStyle: TextDecorationStyle.wavy, fontSize: 30 )):
+    Text(
+        snapshot.data[index].toString()+ ((index != snapshot.data.length-1)?"•":""),
+      style: TextStyle(color: Colors.white, fontSize: 20));
   }
 }
 
@@ -61,9 +101,10 @@ class _DecreasingButtonState extends State<DecreasingButton>
       duration: Duration(milliseconds: 150),
       lowerBound: 0.0,
       upperBound: 0.3,
-    )..addListener(() {
-      setState(() {});
-    });
+    )
+      ..addListener(() {
+        setState(() {});
+      });
   }
 
   @override
@@ -95,6 +136,7 @@ class _DecreasingButtonState extends State<DecreasingButton>
           iconSize: 60,
           onPressed: () {
             bloc.decrement.add(null);
+            bloc.incrementList.add(null);
             setState(() {});
           },
           icon: Image(image: AssetImage('images/minus_white.png')),
@@ -124,7 +166,8 @@ class _IncreasingButtonState extends State<IncreasingButton>
       duration: Duration(milliseconds: 150),
       lowerBound: 0.0,
       upperBound: 0.3,
-    )..addListener(() {
+    )
+      ..addListener(() {
         setState(() {});
       });
   }
@@ -158,6 +201,7 @@ class _IncreasingButtonState extends State<IncreasingButton>
           iconSize: 60,
           onPressed: () {
             bloc.increment.add(null);
+            bloc.incrementList.add(null);
             setState(() {});
           },
           icon: Image(image: AssetImage('images/plus_white.png')),
@@ -182,9 +226,9 @@ class _AnimatedTextWidgetState extends State<AnimatedTextWidget> {
     return Expanded(
         child: Center(
             child: AutoSizeText(
-      '${widget._text}',
-      style: TextStyle(fontSize: 112, color: Colors.white),
-      maxLines: 1,
-    )));
+              '${widget._text}',
+              style: TextStyle(fontSize: 112, color: Colors.white),
+              maxLines: 1,
+            )));
   }
 }
